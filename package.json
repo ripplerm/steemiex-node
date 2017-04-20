@@ -1,0 +1,17 @@
+{
+  "name": "steemiex-node",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "monk": "^4.0.0",
+    "ripplelib": "^1.2.4",
+    "steem-lib": "^1.0.3"
+  },
+  "engines": {
+    "node": "~4.1.0"
+  }
+}
