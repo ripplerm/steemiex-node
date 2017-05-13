@@ -86,44 +86,44 @@ Gateway.prototype.init = function (opts) {
 		if (err || !res) throw err;
 		self.issuer_next_seq = res.next_seq;
 		self.issuer_txns.setLastId(res.id);
-	})
 
-	var account = this.ripple.account(Config.acc_ripple);
+		var account = self.ripple.account(Config.acc_ripple);
 
-	if (opts && opts.immediate) {
-		// start listening immediately from current ledger/block
-		// (for debugging use)
-		account.getInfo(function (err, res) {
-			if (err) throw err;
-			data = res.account_data;
-			self.next_seq = data.Sequence;
-			self.listenMessage();
-			self.listenWithdrawal();
-			self.listenDeposit();
-		});
-	} else {
-		//start listening from the last processed deposit & withdrawal.
-		self.getLastDepositId(Config.acc_ripple, function (err, res) {
-			if (err) throw err;
-			var deposit_id = res.id;
-			var next_seq = res.next_seq;
-			self.deposits.setLastId(deposit_id);
-			var num = parseInt(deposit_id.slice(0,8), 16);
-			console.log('last Deposit Block_num:', num);
-
-			self.getLastWithdrawalId(function (err, id) {
+		if (opts && opts.immediate) {
+			// start listening immediately from current ledger/block
+			// (for debugging use)
+			account.getInfo(function (err, res) {
 				if (err) throw err;
-				self.withdrawals.setLastId(id);
-				var ledger_index = parseInt(id.slice(0,8), 16);
-				console.log('last withdrawal ledger_index:', ledger_index);
+				data = res.account_data;
+				self.next_seq = data.Sequence;
+				self.listenMessage();
+				self.listenWithdrawal();
+				self.listenDeposit();
+			});
+		} else {
+			//start listening from the last processed deposit & withdrawal.
+			self.getLastDepositId(Config.acc_ripple, function (err, res) {
+				if (err) throw err;
+				var deposit_id = res.id;
+				var next_seq = res.next_seq;
+				self.deposits.setLastId(deposit_id);
+				var num = parseInt(deposit_id.slice(0,8), 16);
+				console.log('last Deposit Block_num:', num);
 
-				self.next_seq = next_seq;
-				self.listenMessage(ledger_index);
-				self.listenWithdrawal(ledger_index);
-				self.listenDeposit(deposit_id);
-			});			
-		});
-	}
+				self.getLastWithdrawalId(function (err, id) {
+					if (err) throw err;
+					self.withdrawals.setLastId(id);
+					var ledger_index = parseInt(id.slice(0,8), 16);
+					console.log('last withdrawal ledger_index:', ledger_index);
+
+					self.next_seq = next_seq;
+					self.listenMessage(ledger_index);
+					self.listenWithdrawal(ledger_index);
+					self.listenDeposit(deposit_id);
+				});			
+			});
+		}
+	})
 }
 
 Gateway.prototype.getLastWithdrawalId = function (callback) {
@@ -1399,7 +1399,7 @@ Gateway.prototype.listenMessage = function (minLedger) {
 	var account = this.ripple.account(Config.acc_msg);
 
 	function handleMessage (msg, from, marker) {
-		console.log('msg from:', 'r...' + from.slice(-5))
+		console.log('msg from:', 'r...' + from.slice(-5), + self.isSigner(from));
 		try {
 			msg = JSON.parse(msg);
 		} catch (e) {
@@ -1425,8 +1425,7 @@ Gateway.prototype.listenMessage = function (minLedger) {
 						} else console.log(err.engine_result);
 					} 
 				});
-			}			
-
+			}
 		}
 
 		if (type == 'withdrawal' || type == 'bounced-deposit' || type == 'signer-set-steem' || type == 'virtual') {
@@ -1438,7 +1437,7 @@ Gateway.prototype.listenMessage = function (minLedger) {
 						self.resubmitWithdrawal(id);
 					}
 				});
-			}	
+			}
 		}
 
 		if (type == 'signer-set-ripple' || type == 'account-set') {
@@ -1460,7 +1459,7 @@ Gateway.prototype.listenMessage = function (minLedger) {
 						}
 					}
 				});
-			}	
+			}
 		}
 
 		if (type == 'signer-set-issuer' || type == 'account-set-issuer' || type == 'trust-set-issuer') {
@@ -1473,14 +1472,12 @@ Gateway.prototype.listenMessage = function (minLedger) {
 				});
 			}	
 		}
-
 	}
 
 	account._listener.on('memo-in', function (transaction){
 		var from = transaction.tx_json.Account;
-		if (! self.isSigner(from)) return;
-
 		var memos = transaction.tx_json.Memos;
+		if (! Array.isArray(memos)) return;
 
 		function toHex (num) { return h = ("00000000" + num.toString(16)).substr(-8); }
 		var marker = toHex(transaction.ledger_index) + toHex(transaction.metadata.TransactionIndex);
@@ -1612,10 +1609,7 @@ Gateway.prototype.sendMessage = function (msg) {
 	})
 
 	transaction.submit(function (err, res){
-		if (err) console.log('Error sending msg:', err);
-		if (err && err.result && err.result.slice(0,3) == 'tej') {
-			throw err.result
-		}
+		if (err) throw err;
 	});
 }
 
