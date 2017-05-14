@@ -80,7 +80,7 @@ an example `accountset_proposed.txt` for changing the transfer_rate to 0.2%.
 e.g.
 ```
 {
-  "USD": 1000000,
+  "SBD": 1000000,
   "STM": 10000000
 }
 ```

@@ -65,15 +65,15 @@ Config = {
 
   issuer: "rKYyUDK7N4Wd685xjfMeXM9G8xEe5ciVkC", // issuing address of IOUs.
   currency_stm: 'STM', // symbol for issuing STEEM-IOU on RCL
-  currency_sbd: 'USD', // symbol for issuing SBD-IOU on RCL
+  currency_sbd: 'SBD', // symbol for issuing SBD-IOU on RCL
 
   min_stm: 1, // minimum deposit/withdrawal amount for STEEM
   min_sbd: 1, // minimum deposit/withdrawal amount for SBD
 
   fee: 1000, // Ripple transaction fee
 
-  fee_stm: 0.001, // deposit & withdrawal fee for STEEM
-  fee_sbd: 0.001, // deposit & withdrawal fee for SBD
+  fee_stm: 0.01, // deposit & withdrawal fee for STEEM
+  fee_sbd: 0.01, // deposit & withdrawal fee for SBD
 
   timestamp_offset: 2 * 60, // 2min, (for computing ref-block number).
 

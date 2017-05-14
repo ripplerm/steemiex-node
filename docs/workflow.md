@@ -19,7 +19,7 @@ All operating accounts on both Steem and RCL are set to be M-of-N multi-signatur
 Messages between validators are broadcasted publicly on RCL, by sending payments with memo to account `rwXZe6N3YMtKuGkZDjoqeS6KE3am3U7br`.
 
 #### IOUs Symbol
-The currency symbol used on RCL is `STM` and `USD`, representing STEEM and SBD on Steem blockchain.
+The currency symbol used on RCL is `STM` and `SBD`, representing STEEM and SBD on Steem blockchain.
 
 ---
 
@@ -38,13 +38,13 @@ Any deposit without a valid Ripple address in its memo will be bounced.
 Each deposit is assigned a unique `Sequence` when submitted to RCL. Once it's fail (getting a `tec` error code on RCL), the gateway will bounce the deposit immediately by sending the same amount (less processing-fee) to the orginate account on Steem network.
 
 ## Withdrawal Method
-To make a withdrawal, user can send STM or USD to the gateway's operating account (hotwallet) `r3dpA9FBczceWTWh4FRquuSvEVaQyU3GNg`, by specifying a Steem account in the `MemoData` field of its first Memo in the txn. 
+To make a withdrawal, user can send STM or SBD to the gateway's operating account (hotwallet) `r3dpA9FBczceWTWh4FRquuSvEVaQyU3GNg`, by specifying a Steem account in the `MemoData` field of its first Memo in the txn. 
 
 Since most of the RCL clients for end-users currently doesn't support memo, we allow an alternative method -- users could send a payment with a `DestinationTag` that's equal to the Id of the targeted account on Steem blockchain.
 
 If both Memo and DestinationTag were used in a txn, the DestinationTag will overwrite.   
 
-Withdrawals that’s doesn’t meet a *minimum amount* requirement (1 STM or 1 USD) will be ignored.  
+Withdrawals that’s doesn’t meet a *minimum amount* requirement (1 STM or 1 SBD) will be ignored.  
 Withdrawals with invalid recipient account (or Id) will be bounced immediately.
 
 
